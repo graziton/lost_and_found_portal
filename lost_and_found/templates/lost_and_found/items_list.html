@@ -1,0 +1,32 @@
+{% extends 'lost_and_found/base.html' %}
+
+{% block content %}
+  <h2>Reported Items</h2>
+  
+  <h3>Lost Items</h3>
+  {% if lost_items %}
+    <ul class="list-group">
+      {% for item in lost_items %}
+        <li class="list-group-item">
+          <strong>{{ item.title }}</strong> - {{ item.location }} on {{ item.date_reported }}
+          <!-- You can add a link to a detailed view later -->
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No lost items reported yet.</p>
+  {% endif %}
+
+  <h3 class="mt-4">Found Items</h3>
+  {% if found_items %}
+    <ul class="list-group">
+      {% for item in found_items %}
+        <li class="list-group-item">
+          <strong>{{ item.title }}</strong> - {{ item.location }} on {{ item.date_reported }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No found items reported yet.</p>
+  {% endif %}
+{% endblock %}
