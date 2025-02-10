@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import LostItemForm, FoundItemForm, LostItem, FoundItem
 from django.db.models import Q
+from datetime import datetime
 
 def home(request):
     return render(request, 'lost_and_found/home.html')  # we’ll create this next
@@ -26,10 +27,14 @@ def report_found(request):
     return render(request, 'lost_and_found/report_found.html', {'form': form})
 
 def items_list(request):
-    query = request.GET.get('q', '')  # Get the search query from the URL
+    query = request.GET.get('q', '')  # Search query
+    start_date = request.GET.get('start_date')  # Start date
+    end_date = request.GET.get('end_date')  # End date
+
     lost_items = LostItem.objects.all()
     found_items = FoundItem.objects.all()
 
+    # Apply search filtering
     if query:
         lost_items = lost_items.filter(
             Q(title__icontains=query) | Q(description__icontains=query) | Q(location__icontains=query)
@@ -38,10 +43,20 @@ def items_list(request):
             Q(title__icontains=query) | Q(description__icontains=query) | Q(location__icontains=query)
         )
 
+    # Apply date range filtering
+    if start_date:
+        lost_items = lost_items.filter(date_reported__gte=start_date)
+        found_items = found_items.filter(date_reported__gte=start_date)
+    if end_date:
+        lost_items = lost_items.filter(date_reported__lte=end_date)
+        found_items = found_items.filter(date_reported__lte=end_date)
+
     context = {
         'lost_items': lost_items,
         'found_items': found_items,
         'query': query,
+        'start_date': start_date,
+        'end_date': end_date,
     }
     return render(request, 'lost_and_found/items_list.html', context)
 

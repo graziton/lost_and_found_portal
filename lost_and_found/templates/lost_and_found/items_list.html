@@ -5,8 +5,20 @@
 
   <!-- Search Form -->
   <form method="get" action="{% url 'items_list' %}" class="mb-4">
-    <input type="text" name="q" placeholder="Search items..." class="form-control" value="{{ request.GET.q }}">
-    <button type="submit" class="btn btn-primary mt-2">Search</button>
+    <div class="form-row">
+        <div class="col">
+            <input type="text" name="q" placeholder="Search items..." class="form-control" value="{{ request.GET.q }}">
+        </div>
+        <div class="col">
+            <input type="date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+        </div>
+        <div class="col">
+            <input type="date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
   </form>
 
   <h3>Lost Items</h3>
