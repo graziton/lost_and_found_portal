@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import LostItemForm, FoundItemForm, LostItem, FoundItem
 
 def home(request):
@@ -32,3 +32,11 @@ def items_list(request):
         'found_items': found_items,
     }
     return render(request, 'lost_and_found/items_list.html', context)
+
+def lost_item_detail(request, pk):
+    item = get_object_or_404(LostItem, pk=pk)
+    return render(request, 'lost_and_found/lost_item_detail.html', {'item': item})
+
+def found_item_detail(request, pk):
+    item = get_object_or_404(FoundItem, pk=pk)
+    return render(request, 'lost_and_found/found_item_detail.html', {'item': item})
