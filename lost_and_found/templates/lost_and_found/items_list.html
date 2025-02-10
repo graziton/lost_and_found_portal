@@ -2,15 +2,21 @@
 
 {% block content %}
   <h2>Reported Items</h2>
-  
+
+  <!-- Search Form -->
+  <form method="get" action="{% url 'items_list' %}" class="mb-4">
+    <input type="text" name="q" placeholder="Search items..." class="form-control" value="{{ request.GET.q }}">
+    <button type="submit" class="btn btn-primary mt-2">Search</button>
+  </form>
+
   <h3>Lost Items</h3>
   {% if lost_items %}
     <ul class="list-group">
       {% for item in lost_items %}
         <li class="list-group-item">
-            <a href="{% url 'lost_item_detail' item.pk %}">
-                <strong>{{ item.title }}</strong> - {{ item.location }} on {{ item.date_reported }}
-            </a>
+          <a href="{% url 'lost_item_detail' item.pk %}">
+            <strong>{{ item.title }}</strong> - {{ item.location }} on {{ item.date_reported }}
+          </a>
         </li>
       {% endfor %}
     </ul>
@@ -23,9 +29,9 @@
     <ul class="list-group">
       {% for item in found_items %}
         <li class="list-group-item">
-            <a href="{% url 'found_item_detail' item.pk %}">
-                <strong>{{ item.title }}</strong> - {{ item.location }} on {{ item.date_reported }}
-            </a>
+          <a href="{% url 'found_item_detail' item.pk %}">
+            <strong>{{ item.title }}</strong> - {{ item.location }} on {{ item.date_reported }}
+          </a>
         </li>
       {% endfor %}
     </ul>

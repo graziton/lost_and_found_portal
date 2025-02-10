@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import LostItemForm, FoundItemForm, LostItem, FoundItem
+from django.db.models import Q
 
 def home(request):
     return render(request, 'lost_and_found/home.html')  # we’ll create this next
@@ -25,11 +26,22 @@ def report_found(request):
     return render(request, 'lost_and_found/report_found.html', {'form': form})
 
 def items_list(request):
-    lost_items = LostItem.objects.all().order_by('-date_reported')
-    found_items = FoundItem.objects.all().order_by('-date_reported')
+    query = request.GET.get('q', '')  # Get the search query from the URL
+    lost_items = LostItem.objects.all()
+    found_items = FoundItem.objects.all()
+
+    if query:
+        lost_items = lost_items.filter(
+            Q(title__icontains=query) | Q(description__icontains=query) | Q(location__icontains=query)
+        )
+        found_items = found_items.filter(
+            Q(title__icontains=query) | Q(description__icontains=query) | Q(location__icontains=query)
+        )
+
     context = {
         'lost_items': lost_items,
         'found_items': found_items,
+        'query': query,
     }
     return render(request, 'lost_and_found/items_list.html', context)
 
