@@ -1,0 +1,11 @@
+{% extends 'lost_and_found/base.html' %}
+
+{% block content %}
+  <h2>Delete Lost Item</h2>
+  <p>Are you sure you want to delete "{{ object.title }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

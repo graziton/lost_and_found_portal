@@ -1,0 +1,11 @@
+{% extends 'lost_and_found/base.html' %}
+
+{% block content %}
+  <h2>Update Lost Item</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}

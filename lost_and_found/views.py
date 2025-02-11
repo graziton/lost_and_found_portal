@@ -4,6 +4,8 @@ from .models import LostItem, FoundItem
 from django.db.models import Q
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+from django.views.generic import UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 def home(request):
     return render(request, 'lost_and_found/home.html')
@@ -93,3 +95,47 @@ def register(request):
     else:
         form = UserRegistrationForm()
     return render(request, 'lost_and_found/register.html', {'form': form})
+
+# ---------------------------
+# Edit and Delete Views
+# ---------------------------
+
+class LostItemUpdateView(LoginRequiredMixin, UpdateView):
+    model = LostItem
+    form_class = LostItemForm
+    template_name = 'lost_and_found/update_lost_item.html'
+    success_url = '/'
+
+    def get_queryset(self):
+        # Only allow the reporting user to edit their own lost items
+        return LostItem.objects.filter(reported_by=self.request.user)
+
+class LostItemDeleteView(LoginRequiredMixin, DeleteView):
+    model = LostItem
+    template_name = 'lost_and_found/delete_lost_item.html'
+    success_url = '/'
+
+    def get_queryset(self):
+        # Only allow the reporting user to delete their own lost items
+        return LostItem.objects.filter(reported_by=self.request.user)
+
+class FoundItemUpdateView(LoginRequiredMixin, UpdateView):
+    model = FoundItem
+    form_class = FoundItemForm
+    template_name = 'lost_and_found/update_found_item.html'
+    success_url = '/'
+
+    def get_queryset(self):
+        # Only allow the reporting user to edit their own found items
+        return FoundItem.objects.filter(reported_by=self.request.user)
+
+class FoundItemDeleteView(LoginRequiredMixin, DeleteView):
+    model = FoundItem
+    template_name = 'lost_and_found/delete_found_item.html'
+    success_url = '/'
+
+    def get_queryset(self):
+        # Only allow the reporting user to delete their own found items
+        return FoundItem.objects.filter(reported_by=self.request.user)
+
+# Existing profile view remains here if you already defined it.
