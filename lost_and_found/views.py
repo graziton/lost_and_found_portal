@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import LostItemForm, FoundItemForm, LostItem, FoundItem
+from .forms import LostItemForm, FoundItemForm, UserRegistrationForm
+from .models import LostItem, FoundItem
 from django.db.models import Q
 from datetime import datetime
 
 def home(request):
-    return render(request, 'lost_and_found/home.html')  # we’ll create this next
+    return render(request, 'lost_and_found/home.html')
 
 def report_lost(request):
     if request.method == 'POST':
@@ -27,14 +28,13 @@ def report_found(request):
     return render(request, 'lost_and_found/report_found.html', {'form': form})
 
 def items_list(request):
-    query = request.GET.get('q', '')  # Search query
-    start_date = request.GET.get('start_date')  # Start date
-    end_date = request.GET.get('end_date')  # End date
+    query = request.GET.get('q', '')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
 
     lost_items = LostItem.objects.all()
     found_items = FoundItem.objects.all()
 
-    # Apply search filtering
     if query:
         lost_items = lost_items.filter(
             Q(title__icontains=query) | Q(description__icontains=query) | Q(location__icontains=query)
@@ -43,7 +43,6 @@ def items_list(request):
             Q(title__icontains=query) | Q(description__icontains=query) | Q(location__icontains=query)
         )
 
-    # Apply date range filtering
     if start_date:
         lost_items = lost_items.filter(date_reported__gte=start_date)
         found_items = found_items.filter(date_reported__gte=start_date)
@@ -67,3 +66,13 @@ def lost_item_detail(request, pk):
 def found_item_detail(request, pk):
     item = get_object_or_404(FoundItem, pk=pk)
     return render(request, 'lost_and_found/found_item_detail.html', {'item': item})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'lost_and_found/register.html', {'form': form})
