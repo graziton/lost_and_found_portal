@@ -1,0 +1,37 @@
+{% extends 'lost_and_found/base.html' %}
+
+{% block content %}
+  <h2>User Profile</h2>
+  <p><strong>Username:</strong> {{ user.username }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+
+  <h3>Your Reported Lost Items</h3>
+  {% if user_lost_items %}
+    <ul class="list-group">
+      {% for item in user_lost_items %}
+        <li class="list-group-item">
+          <a href="{% url 'lost_item_detail' item.pk %}">
+            {{ item.title }} - {{ item.location }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You haven't reported any lost items.</p>
+  {% endif %}
+
+  <h3 class="mt-4">Your Reported Found Items</h3>
+  {% if user_found_items %}
+    <ul class="list-group">
+      {% for item in user_found_items %}
+        <li class="list-group-item">
+          <a href="{% url 'found_item_detail' item.pk %}">
+            {{ item.title }} - {{ item.location }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>You haven't reported any found items.</p>
+  {% endif %}
+{% endblock %}

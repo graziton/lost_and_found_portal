@@ -3,29 +3,46 @@ from .forms import LostItemForm, FoundItemForm, UserRegistrationForm
 from .models import LostItem, FoundItem
 from django.db.models import Q
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'lost_and_found/home.html')
 
+@login_required
 def report_lost(request):
     if request.method == 'POST':
         form = LostItemForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            lost_item = form.save(commit=False)
+            lost_item.reported_by = request.user
+            lost_item.save()
             return redirect('home')
     else:
         form = LostItemForm()
     return render(request, 'lost_and_found/report_lost.html', {'form': form})
 
+
+@login_required
 def report_found(request):
     if request.method == 'POST':
         form = FoundItemForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            found_item = form.save(commit=False)
+            found_item.reported_by = request.user
+            found_item.save()
             return redirect('home')
     else:
         form = FoundItemForm()
     return render(request, 'lost_and_found/report_found.html', {'form': form})
+
+@login_required
+def profile(request):
+    user_lost_items = LostItem.objects.filter(reported_by=request.user)
+    user_found_items = FoundItem.objects.filter(reported_by=request.user)
+    return render(request, 'lost_and_found/profile.html', {
+        'user_lost_items': user_lost_items,
+        'user_found_items': user_found_items,
+    })
 
 def items_list(request):
     query = request.GET.get('q', '')
